@@ -10,6 +10,7 @@ private:
     string name;
     int id;
     double salary; 
+
 public:
     // Getter and Setter methods for encapsulation
     void setName(string n) { name = n; }     // Sets the employee's name
@@ -40,6 +41,7 @@ public:
 
 // derived class: Manager
 class Manager : public Employee {
+
 private:
     string department;
     double bonus;
@@ -68,6 +70,7 @@ public:
 
 // derived class: Engineer
 class Engineer : public Employee {
+
 private:
     string specialization;   // the engineer's specialization
     string projectAssigned;   // the project assigned
