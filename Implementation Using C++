@@ -149,7 +149,7 @@ int main() {
 
         switch (choice) {
             case 1: {
-     // It is CRUCIAL to input a single name for either the manager or engineer or errors might occur otherwise
+     /* It is CRUCIAL to point out that when prompted for a name for either the manager or engineer, a single name is to be inputted */
                 int type;
                 cout << "Enter employee type (1: Manager, 2: Engineer): ";
                 cin >> type; 
