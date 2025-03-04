@@ -1,0 +1,193 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// The base class: Employee
+class Employee {
+private:
+    string name;
+    int id;
+    double salary; 
+public:
+    // Getter and Setter methods for encapsulation
+    void setName(string n) { name = n; }     // Sets the employee's name
+    string getName() const { return name; }       // Returns the employee's name.
+    void setId(int i) { id = i; }      // Sets the employee's ID.
+    int getId() const { return id; }       // Returns the employee's ID.
+    void setSalary(double s) { salary = s; }     // Sets the employee's salary.
+    double getSalary() const { return salary; }     // Returns the employee's salary
+
+    // Asks the user to input the employee's name, ID, and salary.
+    virtual void inputDetails() {   
+        cout << "Enter name: ";
+        cin >> name;
+        cout << "Enter ID: ";
+        cin >> id;
+        cout << "Enter salary: ";
+        cin >> salary;
+    }
+
+   // Displays the employee's name, ID, and salary
+    virtual void displayDetails() const {
+        cout << "Name: " << name << ", ID: " << id << ", Salary: " << salary << endl;
+    }
+
+    // Virtual destructor for proper cleanup of derived objects when deleted through a pointer.
+    virtual ~Employee() {}
+};
+
+// derived class: Manager
+class Manager : public Employee {
+private:
+    string department;
+    double bonus;
+
+public:
+    void setDepartment(string d) { department = d; }     // Sets the department.
+    string getDepartment() const { return department; }    // Returns the department.
+    void setBonus(double b) { bonus = b; }    // Sets the bonus.
+    double getBonus() const { return bonus; }    // Returns the bonus.
+
+  // Extends the base class’s inputDetails() to also ask for department and bonus.
+    void inputDetails() override {
+        Employee::inputDetails();
+        cout << "Enter department: ";
+        cin >> department;
+        cout << "Enter bonus: ";
+        cin >> bonus;
+    }
+
+  // Extends the base class’s displayDetails() to include department and bonus.
+    void displayDetails() const override {
+        Employee::displayDetails();
+        cout << "Department: " << department << ", Bonus: " << bonus << endl;
+    }
+};
+
+// derived class: Engineer
+class Engineer : public Employee {
+private:
+    string specialization;   // the engineer's specialization
+    string projectAssigned;   // the project assigned
+
+public:
+    void setSpecialization(string s) { specialization = s; }     // Sets the specialization.
+    string getSpecialization() const { return specialization; }     // Returns the specialization.
+    void setProjectAssigned(string p) { projectAssigned = p; }     // Sets the assigned project.
+    string getProjectAssigned() const { return projectAssigned; }    // Returns the assigned project.
+
+   // Extends the base class’s inputDetails() to ask for specialization and project.
+    void inputDetails() override {
+        Employee::inputDetails();
+        cout << "Enter specialization: ";
+        cin >> specialization;
+        cout << "Enter project assigned: ";
+        cin >> projectAssigned;
+    }
+
+   // Extends the base class’s displayDetails() to include specialization and project.
+    void displayDetails() const override {
+        Employee::displayDetails();
+        cout << "Specialization: " << specialization << ", Project Assigned: " << projectAssigned << endl;
+    }
+};
+
+// Class to manage employee records
+class EmployeeManagementSystem {
+private:
+    vector<Employee*> employees;
+
+public:
+    void addEmployee(Employee* emp) {   // Adds an employee pointer to the vector.
+        employees.push_back(emp);
+    }
+ 
+  // loops over the vector, calling displayDetails() on each employee pointer
+    void displayAllEmployees() const {   
+        if (employees.empty()) {
+            cout << "No employees to display.\n";
+            return;
+        }
+        for (const auto& emp : employees) {
+            emp->displayDetails();
+            cout << endl;
+        }
+    }
+
+   // Searches for an employee by ID, returning the pointer if found or nullptr if not.
+    Employee* searchEmployeeById(int id) const {
+        for (const auto& emp : employees) {
+            if (emp->getId() == id) {
+                return emp;
+            }
+        }
+        return nullptr;
+    }
+
+    // Deletes all dynamically allocated employee objects to prevent memory leaks.
+    ~EmployeeManagementSystem() {
+        for (auto emp : employees) {
+            delete emp;
+        }
+    }
+};
+
+
+int main() {
+    EmployeeManagementSystem system;
+    int choice;
+
+    do {
+        cout << "1. Add Employee\n2. Display All Employees\n3. Search Employee by ID\n4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int type;
+                cout << "Enter employee type (1: Manager, 2: Engineer): ";
+                cin >> type; 
+               // dynamically creates a Manager or Engineer object using new.
+                Employee* emp = nullptr;
+                if (type == 1) {
+                    emp = new Manager();
+                } else if (type == 2) {
+                    emp = new Engineer();
+                } else {
+                    cout << "Invalid type.\n";
+                    continue;
+                }
+             // collects the employee’s details.
+                emp->inputDetails();
+                system.addEmployee(emp);
+                cout << "Employee added successfully.\n";
+                break;
+            }
+            case 2:
+                system.displayAllEmployees();  // shows details of all employees.
+                break;
+          // Asks for an ID, calls searchEmployeeById(), and displays the employee’s details if found, or a “not found” message if not.
+            case 3: {
+                int id;
+                cout << "Enter ID to search: ";
+                cin >> id;
+                Employee* emp = system.searchEmployeeById(id); 
+                if (emp) {
+                    emp->displayDetails();
+                } else {
+                    cout << "Employee not found.\n";
+                }
+                break;
+            }
+            case 4:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
